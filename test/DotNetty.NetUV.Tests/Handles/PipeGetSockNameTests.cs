@@ -74,7 +74,7 @@ namespace DotNetty.NetUV.Tests.Handles
             pipe.CloseHandle(this.OnClose);
         }
 
-        void OnClose(StreamHandle handle)
+        void OnClose(IStreamHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

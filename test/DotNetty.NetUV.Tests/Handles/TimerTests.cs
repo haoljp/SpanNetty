@@ -290,7 +290,7 @@ namespace DotNetty.NetUV.Tests.Handles
             Assert.Equal(0, result);
         }
 
-        static void OnClose(ScheduleHandle handle) => handle.Dispose();
+        static void OnClose(IScheduleHandle handle) => handle.Dispose();
 
         public void Dispose()
         {

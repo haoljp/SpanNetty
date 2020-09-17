@@ -16,7 +16,7 @@ namespace DotNetty.NetUV.Tests.Handles
         const int Port = 9881;
 
         Loop loop;
-        ScheduleHandle server;
+        IScheduleHandle server;
         int closeCount;
         int connectedCount;
         int connectionCount;
@@ -159,7 +159,7 @@ namespace DotNetty.NetUV.Tests.Handles
             this.server.CloseHandle(this.OnClose);
         }
 
-        void OnClose(ScheduleHandle handle)
+        void OnClose(IScheduleHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

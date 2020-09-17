@@ -25,10 +25,7 @@ namespace DotNetty.NetUV.Requests
         private readonly uv_req_type _requestType;
         private readonly int _handleSize;
 
-        internal RequestContext(
-            uv_req_type requestType,
-            int size,
-            ScheduleRequest target)
+        internal RequestContext(uv_req_type requestType, int size, ScheduleRequest target)
         {
             Debug.Assert(size >= 0);
             Debug.Assert(target is object);
@@ -50,10 +47,7 @@ namespace DotNetty.NetUV.Requests
 #endif
         }
 
-        internal RequestContext(
-            uv_req_type requestType,
-            Action<IntPtr> initializer,
-            ScheduleRequest target)
+        internal RequestContext(uv_req_type requestType, Action<IntPtr> initializer, ScheduleRequest target)
         {
             Debug.Assert(initializer is object);
             Debug.Assert(target is object);

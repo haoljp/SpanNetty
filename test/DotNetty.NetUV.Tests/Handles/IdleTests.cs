@@ -48,7 +48,7 @@ namespace DotNetty.NetUV.Tests.Handles
             Assert.Equal(3, this.closeCount);
         }
 
-        void OnClose(ScheduleHandle handle)
+        void OnClose(IScheduleHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

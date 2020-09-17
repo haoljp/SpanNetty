@@ -19,8 +19,11 @@ namespace DotNetty.NetUV.Channels
     using DotNetty.NetUV.Handles;
 
     internal sealed class StreamConsumer<T> : IStreamConsumer<T>
-        where T : StreamHandle
+        where T : IInternalStreamHandle
     {
+        private static readonly Action<T> s_onCompleted = s => OnCompleted(s);
+        private static readonly Action<IScheduleHandle> s_onClosed = s => OnClosed(s);
+
         private readonly Action<T, ReadableBuffer> _onAccept;
         private readonly Action<T, Exception> _onError;
         private readonly Action<T> _onCompleted;
@@ -35,20 +38,21 @@ namespace DotNetty.NetUV.Channels
 
             _onAccept = onAccept;
             _onError = onError;
-            _onCompleted = onCompleted ?? OnCompleted;
+            _onCompleted = onCompleted ?? s_onCompleted;
         }
 
         public void Consume(T stream, IStreamReadCompletion readCompletion)
         {
             try
             {
-                if (readCompletion.Error is object)
+                var error = readCompletion.Error;
+                if (error is null)
                 {
-                    _onError(stream, readCompletion.Error);
+                    _onAccept(stream, readCompletion.Data);
                 }
                 else
                 {
-                    _onAccept(stream, readCompletion.Data);
+                    _onError(stream, error);
                 }
 
                 if (readCompletion.Completed)
@@ -62,8 +66,8 @@ namespace DotNetty.NetUV.Channels
             }
         }
 
-        private static void OnCompleted(T stream) => stream.CloseHandle(OnClosed);
+        private static void OnCompleted(T stream) => stream.CloseHandle(s_onClosed);
 
-        private static void OnClosed(StreamHandle streamHandle) => streamHandle.Dispose();
+        private static void OnClosed(IScheduleHandle streamHandle) => streamHandle.Dispose();
     }
 }

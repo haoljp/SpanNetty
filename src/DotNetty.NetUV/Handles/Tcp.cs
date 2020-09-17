@@ -19,7 +19,7 @@ namespace DotNetty.NetUV.Handles
     using DotNetty.Buffers;
     using DotNetty.NetUV.Native;
 
-    public sealed class Tcp : ServerStream
+    public sealed class Tcp : ServerStream<Tcp>
     {
         internal Tcp(LoopContext loop)
             : base(loop, uv_handle_type.UV_TCP)
@@ -44,8 +44,8 @@ namespace DotNetty.NetUV.Handles
             return ReceiveBufferSize(value);
         }
 
-        public void Shutdown(Action<Tcp, Exception> completedAction = null) =>
-            base.Shutdown((state, error) => completedAction?.Invoke((Tcp)state, error));
+        //public void Shutdown(Action<Tcp, Exception> completedAction = null) =>
+        //    base.Shutdown((state, error) => completedAction?.Invoke((Tcp)state, error));
 
         public void QueueWrite(byte[] array, Action<Tcp, Exception> completion = null)
         {
@@ -63,32 +63,32 @@ namespace DotNetty.NetUV.Handles
                 (state, error) => completion?.Invoke((Tcp)state, error));
         }
 
-        public void QueueWriteStream(WritableBuffer writableBuffer, Action<Tcp, Exception> completion) =>
-            base.QueueWriteStream(writableBuffer, (streamHandle, exception) => completion((Tcp)streamHandle, exception));
+        //public void QueueWriteStream(WritableBuffer writableBuffer, Action<Tcp, Exception> completion) =>
+        //    base.QueueWriteStream(writableBuffer, (streamHandle, exception) => completion((Tcp)streamHandle, exception));
 
-        public Tcp OnRead(
-            Action<Tcp, ReadableBuffer> onAccept,
-            Action<Tcp, Exception> onError,
-            Action<Tcp> onCompleted = null)
-        {
-            if (onAccept is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onAccept); }
-            if (onError is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onError); }
+        //public Tcp OnRead(
+        //    Action<Tcp, ReadableBuffer> onAccept,
+        //    Action<Tcp, Exception> onError,
+        //    Action<Tcp> onCompleted = null)
+        //{
+        //    if (onAccept is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onAccept); }
+        //    if (onError is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onError); }
 
-            base.OnRead(
-                (stream, buffer) => onAccept((Tcp)stream, buffer),
-                (stream, error) => onError((Tcp)stream, error),
-                stream => onCompleted?.Invoke((Tcp)stream));
+        //    base.OnRead(
+        //        (stream, buffer) => onAccept((Tcp)stream, buffer),
+        //        (stream, error) => onError((Tcp)stream, error),
+        //        stream => onCompleted?.Invoke((Tcp)stream));
 
-            return this;
-        }
+        //    return this;
+        //}
 
-        public Tcp OnRead(Action<Tcp, IStreamReadCompletion> onRead)
-        {
-            if (onRead is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onRead); }
+        //public Tcp OnRead(Action<Tcp, IStreamReadCompletion> onRead)
+        //{
+        //    if (onRead is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onRead); }
 
-            base.OnRead((stream, completion) => onRead((Tcp)stream, completion));
-            return this;
-        }
+        //    base.OnRead((stream, completion) => onRead((Tcp)stream, completion));
+        //    return this;
+        //}
 
         public Tcp Bind(IPEndPoint endPoint, bool dualStack = false)
         {
@@ -136,7 +136,7 @@ namespace DotNetty.NetUV.Handles
             return this;
         }
 
-        protected internal override unsafe StreamHandle NewStream()
+        internal override unsafe IInternalStreamHandle NewStream()
         {
             IntPtr loopHandle = ((uv_stream_t*)InternalHandle)->loop;
             var loop = HandleContext.GetTarget<LoopContext>(loopHandle);
@@ -161,19 +161,19 @@ namespace DotNetty.NetUV.Handles
             if (onConnection is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onConnection); }
             if ((uint)(backlog - 1) > SharedConstants.TooBigOrNegative) { ThrowHelper.ThrowArgumentException_Positive(backlog, ExceptionArgument.backlog); }
 
-            StreamListen((handle, exception) => onConnection((Tcp)handle, exception), backlog);
+            StreamListen(onConnection, backlog);
             return this;
         }
 
-        public void CloseHandle(Action<Tcp> onClosed = null)
-        {
-            Action<ScheduleHandle> handler = null;
-            if (onClosed is object)
-            {
-                handler = state => onClosed((Tcp)state);
-            }
+        //public void CloseHandle(Action<Tcp> onClosed = null)
+        //{
+        //    Action<ScheduleHandle> handler = null;
+        //    if (onClosed is object)
+        //    {
+        //        handler = state => onClosed((Tcp)state);
+        //    }
 
-            base.CloseHandle(handler);
-        }
+        //    base.CloseHandle(handler);
+        //}
     }
 }

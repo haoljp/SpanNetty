@@ -39,7 +39,7 @@ namespace DotNetty.NetUV.Handles
         public Exception Error { get; }
     }
 
-    public sealed class Poll : ScheduleHandle
+    public sealed class Poll : ScheduleHandle<Poll>
     {
         internal static readonly uv_poll_cb PollCallback = (h, s, e) => OnPollCallback(h, s, e);
 
@@ -110,15 +110,15 @@ namespace DotNetty.NetUV.Handles
 
         protected override void Close() => _pollCallback = null;
 
-        public void CloseHandle(Action<Poll> onClosed = null)
-        {
-            Action<ScheduleHandle> handler = null;
-            if (onClosed is object)
-            {
-                handler = state => onClosed((Poll)state);
-            }
+        //public void CloseHandle(Action<Poll> onClosed = null)
+        //{
+        //    Action<ScheduleHandle> handler = null;
+        //    if (onClosed is object)
+        //    {
+        //        handler = state => onClosed((Poll)state);
+        //    }
 
-            base.CloseHandle(handler);
-        }
+        //    base.CloseHandle(handler);
+        //}
     }
 }

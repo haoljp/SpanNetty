@@ -53,7 +53,7 @@ namespace DotNetty.NetUV.Handles
         public void Dispose()
         {
             IByteBuffer buffer = Data.Buffer;
-            if (buffer.ReferenceCount > 0)
+            if (buffer.IsAccessible)
             {
                 buffer.Release();
             }

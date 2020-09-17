@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNetty.Buffers\DotNetty.Buffers.Netstandard.csproj" />
+    <ProjectReference Include="..\DotNetty.Transport\DotNetty.Transport.Netstandard.csproj" />
   </ItemGroup>
 
   <ItemGroup>

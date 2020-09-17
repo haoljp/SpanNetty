@@ -207,7 +207,7 @@ namespace DotNetty.NetUV.Tests.Handles
             Assert.Equal(1, this.closeCount);
         }
 
-        void OnConnection(StreamHandle stream, Exception exception) => this.callbackCount++;
+        void OnConnection(Tcp stream, Exception exception) => this.callbackCount++;
 
         [Fact]
         public void TcpConnectNoServer()
@@ -224,13 +224,13 @@ namespace DotNetty.NetUV.Tests.Handles
             this.CloseHandle(tcp);
         }
 
-        void OnConnectedAndShutdown(StreamHandle stream, Exception exception)
+        void OnConnectedAndShutdown(Tcp stream, Exception exception)
         {
             stream.Shutdown(this.OnShutdown);
             this.callbackCount++;
         }
 
-        void OnShutdown(StreamHandle handle, Exception exception) => this.callbackCount++;
+        void OnShutdown(Tcp handle, Exception exception) => this.callbackCount++;
 
         [Fact]
         public void TcpConnect2NoServer()
@@ -247,7 +247,7 @@ namespace DotNetty.NetUV.Tests.Handles
             this.CloseHandle(tcp);
         }
 
-        void OnConnectedAndWrite(StreamHandle handle, Exception exception)
+        void OnConnectedAndWrite(Tcp handle, Exception exception)
         {
             this.callbackCount++;
             if (exception == null)
@@ -257,7 +257,7 @@ namespace DotNetty.NetUV.Tests.Handles
             }
         }
 
-        void OnWriteCompleted(StreamHandle handle, Exception exception) => this.callbackCount++;
+        void OnWriteCompleted(Tcp handle, Exception exception) => this.callbackCount++;
 
         [Fact]
         public void Pipe()
@@ -300,6 +300,8 @@ namespace DotNetty.NetUV.Tests.Handles
             pipe.CloseHandle(this.OnClose);
         }
 
+        void OnConnection(Pipe stream, Exception exception) => this.callbackCount++;
+
         [Fact]
         public void PipeConnectNoServer()
         {
@@ -327,6 +329,26 @@ namespace DotNetty.NetUV.Tests.Handles
 
             this.CloseHandle(pipe);
         }
+
+        void OnConnectedAndShutdown(Pipe stream, Exception exception)
+        {
+            stream.Shutdown(this.OnShutdown);
+            this.callbackCount++;
+        }
+
+        void OnShutdown(Pipe handle, Exception exception) => this.callbackCount++;
+
+        void OnConnectedAndWrite(Pipe handle, Exception exception)
+        {
+            this.callbackCount++;
+            if (exception == null)
+            {
+                var data = new byte[1];
+                handle.QueueWriteStream(data, 0, data.Length, this.OnWriteCompleted);
+            }
+        }
+
+        void OnWriteCompleted(Pipe handle, Exception exception) => this.callbackCount++;
 
         static string GetPipeName() => Platform.IsWindows
                 ? "\\\\?\\pipe\\uv-test5"
@@ -379,16 +401,16 @@ namespace DotNetty.NetUV.Tests.Handles
 
         void OnSendCompleted(Udp udp, Exception exception) => this.callbackCount++;
 
-        void CloseHandle(ScheduleHandle handle)
+        void CloseHandle(IScheduleHandle handle)
         {
             handle.CloseHandle(this.OnClose);
             this.loop.RunDefault();
             Assert.Equal(1, this.closeCount);
         }
 
-        void OnCallback(ScheduleHandle handle) => this.callbackCount++;
+        void OnCallback(IScheduleHandle handle) => this.callbackCount++;
 
-        void OnClose(ScheduleHandle handle)
+        void OnClose(IScheduleHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

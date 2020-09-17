@@ -21,7 +21,7 @@ namespace DotNetty.NetUV.Handles
     /// Idle handles will run the given callback once per loop iteration, 
     /// right before the uv_prepare_t handles
     /// </summary>
-    public sealed class Idle : WorkHandle
+    public sealed class Idle : WorkHandle<Idle>
     {
         internal Idle(LoopContext loop)
             : base(loop, uv_handle_type.UV_IDLE)
@@ -29,16 +29,25 @@ namespace DotNetty.NetUV.Handles
 
         public Idle Start(Action<Idle> callback)
         {
-            if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
+            //if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
 
-            ScheduleStart(state => callback((Idle)state));
+            ScheduleStart(callback);
+
+            return this;
+        }
+
+        public Idle Start(Action<Idle, object> callback, object state)
+        {
+            //if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
+
+            ScheduleStart(callback, state);
 
             return this;
         }
 
         public void Stop() => StopHandle();
 
-        public void CloseHandle(Action<Idle> onClosed = null) =>
-            base.CloseHandle(onClosed);
+        //public void CloseHandle(Action<Idle> onClosed = null) =>
+        //    base.CloseHandle(onClosed);
     }
 }

@@ -21,7 +21,7 @@ namespace DotNetty.NetUV.Handles
     /// Check handles will run the given callback once per loop iteration, 
     /// right after polling for i/o.
     /// </summary>
-    public sealed class Check : WorkHandle
+    public sealed class Check : WorkHandle<Check>
     {
         internal Check(LoopContext loop)
             : base(loop, uv_handle_type.UV_CHECK)
@@ -29,15 +29,23 @@ namespace DotNetty.NetUV.Handles
 
         public Check Start(Action<Check> callback)
         {
-            if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
+            //if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
 
-            ScheduleStart(state => callback((Check)state));
+            ScheduleStart(callback);
+            return this;
+        }
+
+        public Check Start(Action<Check, object> callback, object state)
+        {
+            //if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
+
+            ScheduleStart(callback, state);
             return this;
         }
 
         public void Stop() => StopHandle();
 
-        public void CloseHandle(Action<Check> onClosed = null) =>
-            base.CloseHandle(onClosed);
+        //public void CloseHandle(Action<Check> onClosed = null) =>
+        //    base.CloseHandle(onClosed);
     }
 }

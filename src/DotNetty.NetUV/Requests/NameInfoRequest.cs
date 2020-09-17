@@ -69,10 +69,8 @@ namespace DotNetty.NetUV.Requests
 
         internal override IntPtr InternalHandle => _handle.Handle;
 
-        public unsafe NameInfoRequest Start(
-            IPEndPoint endPoint,
-            Action<NameInfoRequest, NameInfo> callback,
-            NameInfoFlags flags = NameInfoFlags.None)
+        public unsafe NameInfoRequest Start(IPEndPoint endPoint,
+            Action<NameInfoRequest, NameInfo> callback, NameInfoFlags flags = NameInfoFlags.None)
         {
             if (endPoint is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.endPoint); }
             if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }

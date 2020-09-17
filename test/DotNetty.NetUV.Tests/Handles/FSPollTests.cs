@@ -152,7 +152,7 @@ namespace DotNetty.NetUV.Tests.Handles
 
         void OnFSPoll(FSPoll fsPoll, FSPollStatus fsPollStatus) => this.callbackCount++;
 
-        void OnClose(ScheduleHandle handle)
+        void OnClose(IScheduleHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

@@ -30,7 +30,7 @@ using DotNetty.NetUV.Requests;
 
 namespace DotNetty.NetUV
 {
-    internal static class LibuvLoggingExtensions
+    internal static partial class NetUVLoggingExtensions
     {
         #region -- Info --
 
@@ -107,7 +107,7 @@ namespace DotNetty.NetUV
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void Pipeline_Exception_whilst_invoking_read_callback(this IInternalLogger logger, Exception exception)
         {
-            logger.Warn($"{nameof(Pipeline)} Exception whilst invoking read callback.", exception);
+            logger.Warn($"Pipeline Exception whilst invoking read callback.", exception);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -183,7 +183,7 @@ namespace DotNetty.NetUV
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void Pipeline_Handle_faulted(this IInternalLogger logger, uv_handle_type handleType, Exception exception)
         {
-            logger.Error($"{nameof(Pipeline)} {handleType} faulted.", exception);
+            logger.Error($"Pipeline {handleType} faulted.", exception);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

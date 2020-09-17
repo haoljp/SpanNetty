@@ -27,10 +27,7 @@ namespace DotNetty.NetUV.Requests
         private Action<Work> _workCallback;
         private Action<Work> _afterWorkCallback;
 
-        internal Work(
-            LoopContext loop,
-            Action<Work> workCallback,
-            Action<Work> afterWorkCallback)
+        internal Work(LoopContext loop, Action<Work> workCallback, Action<Work> afterWorkCallback)
             : base(uv_req_type.UV_WORK)
         {
             if (loop is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.loop); }

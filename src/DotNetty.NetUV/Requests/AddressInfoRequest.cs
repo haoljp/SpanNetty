@@ -56,10 +56,7 @@ namespace DotNetty.NetUV.Requests
 
         internal override IntPtr InternalHandle => _handle.Handle;
 
-        public unsafe AddressInfoRequest Start(
-            string node,
-            string service,
-            Action<AddressInfoRequest, AddressInfo> callback)
+        public unsafe AddressInfoRequest Start(string node, string service, Action<AddressInfoRequest, AddressInfo> callback)
         {
             if (string.IsNullOrEmpty(node)) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.node); }
             if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }

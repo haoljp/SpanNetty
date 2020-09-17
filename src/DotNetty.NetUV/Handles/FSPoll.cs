@@ -33,7 +33,7 @@ namespace DotNetty.NetUV.Handles
         public Exception Error { get; }
     }
 
-    public sealed class FSPoll : ScheduleHandle
+    public sealed class FSPoll : ScheduleHandle<FSPoll>
     {
         internal static readonly uv_fs_poll_cb FSPollCallback = OnFSPollCallback;
         private Action<FSPoll, FSPollStatus> _pollCallback;
@@ -103,15 +103,15 @@ namespace DotNetty.NetUV.Handles
 
         protected override void Close() => _pollCallback = null;
 
-        public void CloseHandle(Action<FSPoll> onClosed = null)
-        {
-            Action<ScheduleHandle> handler = null;
-            if (onClosed is object)
-            {
-                handler = state => onClosed((FSPoll)state);
-            }
+        //public void CloseHandle(Action<FSPoll> onClosed = null)
+        //{
+        //    Action<ScheduleHandle> handler = null;
+        //    if (onClosed is object)
+        //    {
+        //        handler = state => onClosed((FSPoll)state);
+        //    }
 
-            base.CloseHandle(handler);
-        }
+        //    base.CloseHandle(handler);
+        //}
     }
 }

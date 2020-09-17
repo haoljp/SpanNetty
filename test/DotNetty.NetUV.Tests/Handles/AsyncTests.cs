@@ -52,7 +52,7 @@ namespace DotNetty.NetUV.Tests.Handles
             this.async.CloseHandle(this.OnClose);
         }
 
-        void OnClose(ScheduleHandle handle)
+        void OnClose(IScheduleHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

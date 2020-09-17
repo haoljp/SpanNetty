@@ -18,18 +18,18 @@ namespace DotNetty.NetUV.Channels
     using DotNetty.NetUV.Handles;
 
     internal sealed class ReadStreamConsumer<T> : IStreamConsumer<T>
-        where T : StreamHandle
+        where T : IInternalStreamHandle
     {
-        private readonly Action<T, IStreamReadCompletion> readAction;
+        private readonly Action<T, IStreamReadCompletion> _readAction;
 
         public ReadStreamConsumer(Action<T, IStreamReadCompletion> readAction)
         {
             if (readAction is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.readAction); }
 
-            this.readAction = readAction;
+            _readAction = readAction;
         }
 
         public void Consume(T stream, IStreamReadCompletion readCompletion) =>
-            this.readAction(stream, readCompletion);
+            _readAction(stream, readCompletion);
     }
 }

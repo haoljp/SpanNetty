@@ -72,7 +72,7 @@ namespace DotNetty.NetUV.Tests.Handles
 
         void OnReceive(Udp udp, IDatagramReadCompletion completion)
         {
-            if (completion.Error == null 
+            if (completion.Error == null
                 && completion.Data.Count > 0)
             {
                 this.receiveCount++;
@@ -81,12 +81,12 @@ namespace DotNetty.NetUV.Tests.Handles
 
         void OnTimer(Timer handle)
         {
-            this.server?.CloseHandle(this.OnClose);
-            this.client?.CloseHandle(this.OnClose);
-            handle.CloseHandle(this.OnClose);
+            this.server?.CloseHandle(h => this.OnClose(h));
+            this.client?.CloseHandle(h => this.OnClose(h));
+            handle.CloseHandle(h => this.OnClose(h));
         }
 
-        void OnClose(ScheduleHandle handle)
+        void OnClose(IScheduleHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

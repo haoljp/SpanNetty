@@ -29,7 +29,7 @@ namespace DotNetty.NetUV.Handles
             uv_handle_type handleType,
             Func<IntPtr, IntPtr, object[], int> initializer,
             IntPtr loopHandle,
-            ScheduleHandle target,
+            IInternalScheduleHandle target,
             params object[] args)
         {
             Debug.Assert(loopHandle != IntPtr.Zero);
@@ -113,7 +113,7 @@ namespace DotNetty.NetUV.Handles
         {
             if (handle == IntPtr.Zero) { return; }
 
-            ScheduleHandle scheduleHandle = null;
+            IInternalScheduleHandle scheduleHandle = null;
 
             // Get gc handle first
             IntPtr pHandle = ((uv_handle_t*)handle)->data;
@@ -122,7 +122,7 @@ namespace DotNetty.NetUV.Handles
                 GCHandle nativeHandle = GCHandle.FromIntPtr(pHandle);
                 if (nativeHandle.IsAllocated)
                 {
-                    scheduleHandle = nativeHandle.Target as ScheduleHandle;
+                    scheduleHandle = nativeHandle.Target as IInternalScheduleHandle;
                     nativeHandle.Free();
 
                     ((uv_handle_t*)handle)->data = IntPtr.Zero;

@@ -254,7 +254,7 @@ namespace DotNetty.NetUV.Native
 
         #region Common
 
-        internal static HandleContext Initialize(IntPtr loopHandle, uv_handle_type handleType, ScheduleHandle target, object[] args)
+        internal static HandleContext Initialize(IntPtr loopHandle, uv_handle_type handleType, IInternalScheduleHandle target, object[] args)
         {
             Debug.Assert(loopHandle != IntPtr.Zero);
             Debug.Assert(target is object);

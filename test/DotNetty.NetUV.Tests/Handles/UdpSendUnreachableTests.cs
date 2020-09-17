@@ -76,11 +76,11 @@ namespace DotNetty.NetUV.Tests.Handles
         void OnTimer(Timer handle)
         {
             this.timerCount++;
-            this.client?.CloseHandle(this.OnClose);
-            handle.CloseHandle(this.OnClose);
+            this.client?.CloseHandle(h => this.OnClose(h));
+            handle.CloseHandle(h => this.OnClose(h));
         }
 
-        void OnClose(ScheduleHandle handle)
+        void OnClose(IScheduleHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

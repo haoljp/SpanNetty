@@ -21,7 +21,7 @@ namespace DotNetty.NetUV.Handles
     using DotNetty.NetUV.Native;
     using DotNetty.NetUV.Requests;
 
-    public sealed class Udp : ScheduleHandle
+    public sealed class Udp : ScheduleHandle<Udp>
     {
         private const int FixedBufferSize = 2048;
 
@@ -418,16 +418,16 @@ namespace DotNetty.NetUV.Handles
             _pendingRead.Dispose();
         }
 
-        public void CloseHandle(Action<Udp> onClosed = null)
-        {
-            Action<ScheduleHandle> handler = null;
-            if (onClosed is object)
-            {
-                handler = state => onClosed((Udp)state);
-            }
+        //public void CloseHandle(Action<Udp> onClosed = null)
+        //{
+        //    Action<ScheduleHandle> handler = null;
+        //    if (onClosed is object)
+        //    {
+        //        handler = state => onClosed((Udp)state);
+        //    }
 
-            base.CloseHandle(handler);
-        }
+        //    base.CloseHandle(handler);
+        //}
 
         private sealed class DatagramReadCompletion : ReadCompletion, IDatagramReadCompletion
         {

@@ -21,9 +21,7 @@ namespace DotNetty.NetUV.Handles
     public static class HandleExtensions
     {
         public static Pipe Listen(this Pipe pipe,
-            string name,
-            Action<Pipe, Exception> onConnection,
-            int backlog = ServerStream.DefaultBacklog)
+            string name, Action<Pipe, Exception> onConnection, int backlog = ServerStream.DefaultBacklog)
         {
             if (pipe is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.pipe); }
             if (string.IsNullOrEmpty(name)) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.name); }
@@ -37,8 +35,7 @@ namespace DotNetty.NetUV.Handles
         }
 
         public static Pipe ConnectTo(this Pipe pipe,
-            string remoteName,
-            Action<Pipe, Exception> connectedAction)
+            string remoteName, Action<Pipe, Exception> connectedAction)
         {
             if (pipe is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.pipe); }
             if (string.IsNullOrEmpty(remoteName)) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.remoteName); }
@@ -59,10 +56,7 @@ namespace DotNetty.NetUV.Handles
         }
 
         public static Tcp Listen(this Tcp tcp,
-            IPEndPoint localEndPoint,
-            Action<Tcp, Exception> onConnection,
-            int backlog = ServerStream.DefaultBacklog,
-            bool dualStack = false)
+            IPEndPoint localEndPoint, Action<Tcp, Exception> onConnection, int backlog = ServerStream.DefaultBacklog, bool dualStack = false)
         {
             if (tcp is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tcp); }
             if (localEndPoint is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.localEndPoint); }
@@ -75,10 +69,7 @@ namespace DotNetty.NetUV.Handles
         }
 
         public static Tcp ConnectTo(this Tcp tcp,
-            IPEndPoint localEndPoint,
-            IPEndPoint remoteEndPoint,
-            Action<Tcp, Exception> connectedAction,
-            bool dualStack = false)
+            IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, Action<Tcp, Exception> connectedAction, bool dualStack = false)
         {
             if (tcp is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tcp); }
             if (localEndPoint is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.localEndPoint); }
@@ -92,9 +83,7 @@ namespace DotNetty.NetUV.Handles
         }
 
         public static Tcp ConnectTo(this Tcp tcp,
-            IPEndPoint remoteEndPoint,
-            Action<Tcp, Exception> connectedAction,
-            bool dualStack = false)
+            IPEndPoint remoteEndPoint, Action<Tcp, Exception> connectedAction, bool dualStack = false)
         {
             if (tcp is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tcp); }
             if (remoteEndPoint is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.remoteEndPoint); }
@@ -115,9 +104,7 @@ namespace DotNetty.NetUV.Handles
         }
 
         public static Tcp Bind(this Tcp tcp,
-            IPEndPoint localEndPoint,
-            Action<Tcp, IStreamReadCompletion> onRead,
-            bool dualStack = false)
+            IPEndPoint localEndPoint, Action<Tcp, IStreamReadCompletion> onRead, bool dualStack = false)
         {
             if (tcp is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.tcp); }
             if (localEndPoint is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.localEndPoint); }
@@ -130,9 +117,7 @@ namespace DotNetty.NetUV.Handles
         }
 
         public static Udp ReceiveStart(this Udp udp,
-            IPEndPoint localEndPoint,
-            Action<Udp, IDatagramReadCompletion> receiveAction,
-            bool dualStack = false)
+            IPEndPoint localEndPoint, Action<Udp, IDatagramReadCompletion> receiveAction, bool dualStack = false)
         {
             if (udp is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.udp); }
             if (localEndPoint is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.localEndPoint); }
@@ -145,8 +130,7 @@ namespace DotNetty.NetUV.Handles
             return udp;
         }
 
-        public static Udp ReceiveStart(this Udp udp,
-            Action<Udp, IDatagramReadCompletion> receiveAction)
+        public static Udp ReceiveStart(this Udp udp, Action<Udp, IDatagramReadCompletion> receiveAction)
         {
             if (udp is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.udp); }
             if (receiveAction is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.receiveAction); }

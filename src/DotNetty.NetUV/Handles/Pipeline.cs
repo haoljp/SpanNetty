@@ -22,21 +22,22 @@ namespace DotNetty.NetUV.Handles
     using DotNetty.NetUV.Native;
     using DotNetty.NetUV.Requests;
 
-    internal sealed class Pipeline : IDisposable
+    internal sealed class Pipeline<THandle> : IDisposable
+        where THandle : IInternalStreamHandle
     {
-        private static readonly IInternalLogger Log = InternalLoggerFactory.GetInstance<Pipeline>();
+        private static readonly IInternalLogger Log = InternalLoggerFactory.GetInstance("DotNetty.NetUV.Handles.Pipeline");
 
-        private readonly StreamHandle _streamHandle;
+        private readonly THandle _streamHandle;
         private readonly PooledByteBufferAllocator _allocator;
         private readonly ReceiveBufferSizeEstimate _receiveBufferSizeEstimate;
         private readonly PendingRead _pendingRead;
-        private IStreamConsumer<StreamHandle> _streamConsumer;
+        private IStreamConsumer<THandle> _streamConsumer;
 
-        internal Pipeline(StreamHandle streamHandle)
+        internal Pipeline(THandle streamHandle)
             : this(streamHandle, PooledByteBufferAllocator.Default)
         { }
 
-        internal Pipeline(StreamHandle streamHandle, PooledByteBufferAllocator allocator)
+        internal Pipeline(THandle streamHandle, PooledByteBufferAllocator allocator)
         {
             Debug.Assert(streamHandle is object);
             Debug.Assert(allocator is object);
@@ -47,7 +48,7 @@ namespace DotNetty.NetUV.Handles
             _pendingRead = new PendingRead();
         }
 
-        internal void Consumer(IStreamConsumer<StreamHandle> consumer)
+        internal void Consumer(IStreamConsumer<THandle> consumer)
         {
             Debug.Assert(consumer is object);
             _streamConsumer = consumer;
@@ -61,7 +62,7 @@ namespace DotNetty.NetUV.Handles
 #if DEBUG
             if (Log.TraceEnabled)
             {
-                Log.Trace("{} receive buffer allocated size = {}", nameof(Pipeline), buffer.Capacity);
+                Log.Trace("{} receive buffer allocated size = {}", nameof(Pipeline<THandle>), buffer.Capacity);
             }
 #endif
 
@@ -111,7 +112,7 @@ namespace DotNetty.NetUV.Handles
             }
         }
 
-        internal void QueueWrite(IByteBuffer buf, Action<StreamHandle, Exception> completion)
+        internal void QueueWrite(IByteBuffer buf, Action<THandle, Exception> completion)
         {
             Debug.Assert(buf is object);
 
@@ -131,7 +132,7 @@ namespace DotNetty.NetUV.Handles
             }
         }
 
-        internal void QueueWrite(IByteBuffer bufferRef, StreamHandle sendHandle, Action<StreamHandle, Exception> completion)
+        internal void QueueWrite(IByteBuffer bufferRef, THandle sendHandle, Action<THandle, Exception> completion)
         {
             Debug.Assert(bufferRef is object && sendHandle is object);
 
@@ -159,15 +160,13 @@ namespace DotNetty.NetUV.Handles
 
         private sealed class StreamReadCompletion : ReadCompletion, IStreamReadCompletion
         {
-            private readonly bool _completed;
-
             internal StreamReadCompletion(ref ReadableBuffer data, Exception error, bool completed)
                 : base(ref data, error)
             {
-                _completed = completed;
+                Completed = completed;
             }
 
-            public bool Completed => _completed;
+            public bool Completed { get; }
         }
     }
 }

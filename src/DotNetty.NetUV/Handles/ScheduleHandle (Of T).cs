@@ -20,17 +20,16 @@ namespace DotNetty.NetUV.Handles
     using DotNetty.Common.Internal.Logging;
     using DotNetty.NetUV.Native;
 
-    public abstract class ScheduleHandle : IDisposable
+    public abstract class ScheduleHandle<THandle> : IInternalScheduleHandle, IDisposable
+        where THandle : ScheduleHandle<THandle>
     {
-        protected static readonly IInternalLogger Log = InternalLoggerFactory.GetInstance<ScheduleHandle>();
+        protected static readonly IInternalLogger Log = InternalLoggerFactory.GetInstance(typeof(THandle));
 
         private readonly HandleContext _handle;
-        private Action<ScheduleHandle> _closeCallback;
+        private readonly uv_handle_type _handleType;
+        private Action<THandle> _closeCallback;
 
-        internal ScheduleHandle(
-            LoopContext loop,
-            uv_handle_type handleType,
-            object[] args = null)
+        internal ScheduleHandle(LoopContext loop, uv_handle_type handleType, object[] args = null)
         {
             if (loop is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.loop); }
 
@@ -38,7 +37,7 @@ namespace DotNetty.NetUV.Handles
             Debug.Assert(initialHandle is object);
 
             _handle = initialHandle;
-            HandleType = handleType;
+            _handleType = handleType;
         }
 
         public bool IsActive => _handle.IsActive;
@@ -53,24 +52,32 @@ namespace DotNetty.NetUV.Handles
 
         public object UserToken { get; set; }
 
+        IntPtr IInternalScheduleHandle.InternalHandle
+        {
+            [MethodImpl(InlineMethod.AggressiveOptimization)]
+            get => _handle.Handle;
+        }
+
         internal IntPtr InternalHandle
         {
             [MethodImpl(InlineMethod.AggressiveOptimization)]
             get => _handle.Handle;
         }
 
-        internal uv_handle_type HandleType { get; }
+        internal uv_handle_type HandleType => _handleType;
 
-        internal void OnHandleClosed()
+        uv_handle_type IInternalScheduleHandle.HandleType => _handleType;
+
+        void IInternalScheduleHandle.OnHandleClosed()
         {
             try
             {
                 _handle.SetHandleAsInvalid();
-                _closeCallback?.Invoke(this);
+                _closeCallback?.Invoke((THandle)this);
             }
             catch (Exception exception)
             {
-                Log.Handle_close_handle_callback_error(HandleType, exception);
+                Log.Handle_close_handle_callback_error(_handleType, exception);
             }
             finally
             {
@@ -78,6 +85,8 @@ namespace DotNetty.NetUV.Handles
                 UserToken = null;
             }
         }
+
+        void IInternalScheduleHandle.Validate() => this.Validate();
 
         [MethodImpl(InlineMethod.AggressiveOptimization)]
         internal void Validate() => _handle.Validate();
@@ -103,12 +112,23 @@ namespace DotNetty.NetUV.Handles
             }
             catch (Exception exception)
             {
-                Log.Failed_to_get_loop(HandleType, exception);
+                Log.Failed_to_get_loop(_handleType, exception);
                 return false;
             }
         }
 
-        protected internal void CloseHandle(Action<ScheduleHandle> handler = null)
+        void IScheduleHandle.CloseHandle(Action<IScheduleHandle> onClosed)
+        {
+            Action<THandle> handler = null;
+            if (onClosed is object)
+            {
+                handler = state => onClosed(state);
+            }
+
+            CloseHandle(handler);
+        }
+
+        public void CloseHandle(Action<THandle> handler = null)
         {
             try
             {
@@ -116,12 +136,12 @@ namespace DotNetty.NetUV.Handles
             }
             catch (Exception exception)
             {
-                Log.Failed_to_close_handle(HandleType, exception);
+                Log.Failed_to_close_handle(_handleType, exception);
                 throw;
             }
         }
 
-        protected virtual void ScheduleClose(Action<ScheduleHandle> handler = null)
+        protected virtual void ScheduleClose(Action<THandle> handler = null)
         {
             if (!IsValid) { return; }
 
@@ -136,7 +156,7 @@ namespace DotNetty.NetUV.Handles
         {
             if (!IsValid) { return; }
 
-            NativeMethods.Stop(HandleType, _handle.Handle);
+            NativeMethods.Stop(_handleType, _handle.Handle);
         }
 
         public void AddReference()

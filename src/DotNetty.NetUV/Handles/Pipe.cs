@@ -18,7 +18,7 @@ namespace DotNetty.NetUV.Handles
     using DotNetty.Buffers;
     using DotNetty.NetUV.Native;
 
-    public sealed class Pipe : ServerStream
+    public sealed class Pipe : ServerStream<Pipe>
     {
         private bool _ipc;
 
@@ -72,37 +72,37 @@ namespace DotNetty.NetUV.Handles
             return ReceiveBufferSize(value);
         }
 
-        public Pipe OnRead(
-            Action<Pipe, ReadableBuffer> onAccept,
-            Action<Pipe, Exception> onError,
-            Action<Pipe> onCompleted = null)
-        {
-            if (onAccept is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onAccept); }
-            if (onError is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onError); }
+        //public Pipe OnRead(
+        //    Action<Pipe, ReadableBuffer> onAccept,
+        //    Action<Pipe, Exception> onError,
+        //    Action<Pipe> onCompleted = null)
+        //{
+        //    if (onAccept is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onAccept); }
+        //    if (onError is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onError); }
 
-            base.OnRead(
-                (stream, buffer) => onAccept((Pipe)stream, buffer),
-                (stream, error) => onError((Pipe)stream, error),
-                stream => onCompleted?.Invoke((Pipe)stream));
+        //    base.OnRead(
+        //        (stream, buffer) => onAccept((Pipe)stream, buffer),
+        //        (stream, error) => onError((Pipe)stream, error),
+        //        stream => onCompleted?.Invoke((Pipe)stream));
 
-            return this;
-        }
+        //    return this;
+        //}
 
-        public Pipe OnRead(Action<Pipe, IStreamReadCompletion> onRead)
-        {
-            if (onRead is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onRead); }
+        //public Pipe OnRead(Action<Pipe, IStreamReadCompletion> onRead)
+        //{
+        //    if (onRead is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onRead); }
 
-            base.OnRead((stream, completion) => onRead((Pipe)stream, completion));
-            return this;
-        }
+        //    base.OnRead((stream, completion) => onRead((Pipe)stream, completion));
+        //    return this;
+        //}
 
-        public void QueueWriteStream(WritableBuffer writableBuffer, Action<Pipe, Exception> completion) =>
-            base.QueueWriteStream(writableBuffer,
-                (streamHandle, exception) => completion((Pipe)streamHandle, exception));
+        //public void QueueWriteStream(WritableBuffer writableBuffer, Action<Pipe, Exception> completion) =>
+        //    base.QueueWriteStream(writableBuffer,
+        //        (streamHandle, exception) => completion((Pipe)streamHandle, exception));
 
-        public void QueueWriteStream(WritableBuffer writableBuffer, Tcp sendHandle, Action<Pipe, Exception> completion) =>
-            base.QueueWriteStream(writableBuffer, sendHandle,
-                (streamHandle, exception) => completion((Pipe)streamHandle, exception));
+        //public void QueueWriteStream(WritableBuffer writableBuffer, Tcp sendHandle, Action<Pipe, Exception> completion) =>
+        //    base.QueueWriteStream(writableBuffer, sendHandle,
+        //        (streamHandle, exception) => completion((Pipe)streamHandle, exception));
 
         public Pipe Bind(string name)
         {
@@ -140,11 +140,11 @@ namespace DotNetty.NetUV.Handles
             return NativeMethods.PipePendingCount(InternalHandle);
         }
 
-        public unsafe StreamHandle CreatePendingType()
+        public unsafe IStreamHandle CreatePendingType()
         {
             Validate();
 
-            StreamHandle handle = null;
+            IInternalStreamHandle handle = null;
             int count = PendingCount();
             if (count > 0)
             {
@@ -171,13 +171,13 @@ namespace DotNetty.NetUV.Handles
             return handle;
         }
 
-        protected internal override unsafe StreamHandle NewStream()
+        internal override unsafe IInternalStreamHandle NewStream()
         {
             IntPtr loopHandle = ((uv_stream_t*)InternalHandle)->loop;
             var loop = HandleContext.GetTarget<LoopContext>(loopHandle);
             uv_handle_type type = ((uv_stream_t*)InternalHandle)->type;
 
-            StreamHandle client;
+            IInternalStreamHandle client;
             switch (type)
             {
                 case uv_handle_type.UV_NAMED_PIPE:
@@ -214,23 +214,23 @@ namespace DotNetty.NetUV.Handles
             if ((uint)(backlog - 1) > SharedConstants.TooBigOrNegative) { ThrowHelper.ThrowArgumentException_Positive(backlog, ExceptionArgument.backlog); }
 
             _ipc = useIpc;
-            StreamListen((handle, exception) => onConnection((Pipe)handle, exception), backlog);
+            StreamListen(onConnection, backlog);
 
             return this;
         }
 
-        public void Shutdown(Action<Pipe, Exception> completedAction = null) =>
-            base.Shutdown((state, error) => completedAction?.Invoke((Pipe)state, error));
+        //public void Shutdown(Action<Pipe, Exception> completedAction = null) =>
+        //    base.Shutdown((state, error) => completedAction?.Invoke((Pipe)state, error));
 
-        public void CloseHandle(Action<Pipe> onClosed = null)
-        {
-            Action<ScheduleHandle> handler = null;
-            if (onClosed is object)
-            {
-                handler = state => onClosed((Pipe)state);
-            }
+        //public void CloseHandle(Action<Pipe> onClosed = null)
+        //{
+        //    Action<ScheduleHandle> handler = null;
+        //    if (onClosed is object)
+        //    {
+        //        handler = state => onClosed((Pipe)state);
+        //    }
 
-            base.CloseHandle(handler);
-        }
+        //    base.CloseHandle(handler);
+        //}
     }
 }

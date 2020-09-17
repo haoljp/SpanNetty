@@ -71,7 +71,7 @@ namespace DotNetty.NetUV.Handles
         public Exception Error { get; }
     }
 
-    public sealed class FSEvent : ScheduleHandle
+    public sealed class FSEvent : ScheduleHandle<FSEvent>
     {
         internal static readonly uv_fs_event_cb FSEventCallback = (h, f, e, s) => OnFSEventCallback(h, f, e, s);
 
@@ -137,15 +137,15 @@ namespace DotNetty.NetUV.Handles
 
         protected override void Close() => _eventCallback = null;
 
-        public void CloseHandle(Action<FSEvent> onClosed = null)
-        {
-            Action<ScheduleHandle> handler = null;
-            if (onClosed is object)
-            {
-                handler = state => onClosed((FSEvent)state);
-            }
+        //public void CloseHandle(Action<FSEvent> onClosed = null)
+        //{
+        //    Action<ScheduleHandle> handler = null;
+        //    if (onClosed is object)
+        //    {
+        //        handler = state => onClosed((FSEvent)state);
+        //    }
 
-            base.CloseHandle(handler);
-        }
+        //    base.CloseHandle(handler);
+        //}
     }
 }

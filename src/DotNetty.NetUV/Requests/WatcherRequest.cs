@@ -26,11 +26,9 @@ namespace DotNetty.NetUV.Requests
         private readonly bool _closeOnCallback;
         private Action<WatcherRequest, Exception> _watcherCallback;
 
-        internal WatcherRequest(
-            uv_req_type requestType,
+        internal WatcherRequest(uv_req_type requestType,
             Action<WatcherRequest, Exception> watcherCallback,
-            int size = 0,
-            bool closeOnCallback = false)
+            int size = 0, bool closeOnCallback = false)
             : base(requestType)
         {
             Debug.Assert(size >= 0);
@@ -40,11 +38,9 @@ namespace DotNetty.NetUV.Requests
             _handle = new RequestContext(requestType, size, this);
         }
 
-        internal WatcherRequest(
-            uv_req_type requestType,
+        internal WatcherRequest(uv_req_type requestType,
             Action<WatcherRequest, Exception> watcherCallback,
-            Action<IntPtr> initializer,
-            bool closeOnCallback = false)
+            Action<IntPtr> initializer, bool closeOnCallback = false)
             : base(requestType)
         {
             Debug.Assert(initializer is object);

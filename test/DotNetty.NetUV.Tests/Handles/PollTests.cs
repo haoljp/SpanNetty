@@ -425,7 +425,7 @@ namespace DotNetty.NetUV.Tests.Handles
             context.Handle.CloseHandle(OnClose);
         }
 
-        static void OnClose(ScheduleHandle handle) => handle.Dispose();
+        static void OnClose(IScheduleHandle handle) => handle.Dispose();
 
         void DestroyConnectionContext(ConnectionContext context)
         {
@@ -434,7 +434,7 @@ namespace DotNetty.NetUV.Tests.Handles
             context.TimerHandle.CloseHandle(this.OnConnectionClosed);
         }
 
-        void OnConnectionClosed(ScheduleHandle handle)
+        void OnConnectionClosed(IScheduleHandle handle)
         {
             var context = (ConnectionContext)handle.UserToken;
             context.OpenHandles--;

@@ -17,28 +17,40 @@ namespace DotNetty.NetUV.Handles
     using System;
     using DotNetty.NetUV.Native;
 
-    public sealed class Signal : ScheduleHandle<Signal>
+    public abstract class WorkHandle<THandle> : ScheduleHandle<THandle>, IWorkHandle
+        where THandle : WorkHandle<THandle>
     {
-        internal static readonly uv_watcher_cb SignalCallback = (h, s) => OnSignalCallback(h, s);
+        protected Action<THandle, object> Callback;
+        protected object State;
 
-        private Action<Signal, int> _signalCallback;
-
-        internal Signal(LoopContext loop)
-            : base(loop, uv_handle_type.UV_SIGNAL)
+        internal WorkHandle(LoopContext loop, uv_handle_type handleType, params object[] args)
+            : base(loop, handleType, args)
         { }
 
-        public Signal Start(int signum, Action<Signal, int> callback)
+        protected void ScheduleStart(Action<THandle> callback)
         {
             if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
 
-            _signalCallback = callback;
-            Validate();
-            NativeMethods.SignalStart(InternalHandle, signum);
-
-            return this;
+            ScheduleStart((h, s) => callback(h), null);
         }
 
-        private void OnSignalCallback(int signum)
+        protected void ScheduleStart(Action<THandle, object> callback, object state)
+        {
+            if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
+
+            Validate();
+            Callback = callback;
+            State = state;
+            NativeMethods.Start(HandleType, InternalHandle);
+        }
+
+        protected override void Close()
+        {
+            Callback = null;
+            State = null;
+        }
+
+        void IWorkHandle.OnWorkCallback()
         {
 #if DEBUG
             if (Log.TraceEnabled)
@@ -46,9 +58,10 @@ namespace DotNetty.NetUV.Handles
                 Log.Trace("{} {} callback", HandleType, InternalHandle);
             }
 #endif
+
             try
             {
-                _signalCallback?.Invoke(this, signum);
+                Callback?.Invoke((THandle)this, State);
             }
             catch (Exception exception)
             {
@@ -57,22 +70,13 @@ namespace DotNetty.NetUV.Handles
             }
         }
 
-        private static void OnSignalCallback(IntPtr handle, int signum)
-        {
-            var signal = HandleContext.GetTarget<Signal>(handle);
-            signal?.OnSignalCallback(signum);
-        }
-
-        public void Stop() => StopHandle();
-
-        protected override void Close() => _signalCallback = null;
-
-        //public void CloseHandle(Action<Signal> onClosed = null)
+        //protected void CloseHandle<T>(Action<T> onClosed = null)
+        //    where T : THandle
         //{
         //    Action<ScheduleHandle> handler = null;
         //    if (onClosed is object)
         //    {
-        //        handler = state => onClosed((Signal)state);
+        //        handler = state => onClosed((T)state);
         //    }
 
         //    base.CloseHandle(handler);

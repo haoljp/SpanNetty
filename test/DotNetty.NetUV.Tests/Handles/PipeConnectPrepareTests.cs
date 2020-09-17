@@ -53,7 +53,7 @@ namespace DotNetty.NetUV.Tests.Handles
             ? "bad-pipe" 
             : "/path/to/unix/socket/that/really/should/not/be/there";
 
-        void OnClose(ScheduleHandle handle)
+        void OnClose(IScheduleHandle handle)
         {
             handle.Dispose();
             this.closeCount++;

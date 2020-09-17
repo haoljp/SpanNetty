@@ -18,13 +18,14 @@ namespace DotNetty.NetUV.Requests
     using DotNetty.NetUV.Handles;
     using DotNetty.NetUV.Native;
 
-    internal sealed class StreamShutdown : IDisposable
+    internal sealed class StreamShutdown<THandle> : IDisposable
+        where THandle : class, IInternalStreamHandle
     {
         private readonly WatcherRequest _watcherRequest;
-        private StreamHandle _streamHandle;
-        private Action<StreamHandle, Exception> _completedAction;
+        private THandle _streamHandle;
+        private Action<THandle, Exception> _completedAction;
 
-        internal StreamShutdown(StreamHandle streamHandle, Action<StreamHandle, Exception> completedAction)
+        internal StreamShutdown(THandle streamHandle, Action<THandle, Exception> completedAction)
         {
             if (streamHandle is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.streamHandle); }
 
@@ -40,7 +41,7 @@ namespace DotNetty.NetUV.Requests
                 closeOnCallback: true);
         }
 
-        internal static void Completed(Action<StreamHandle, Exception> completion, StreamHandle handle, Exception error)
+        internal static void Completed(Action<THandle, Exception> completion, THandle handle, Exception error)
         {
             if (handle is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.handle); }
 

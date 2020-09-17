@@ -22,17 +22,23 @@ namespace DotNetty.NetUV.Handles
     /// Async handles allow the user to “wakeup” the event loop and get 
     /// a callback called from another thread.
     /// </summary>
-    public sealed class Async : WorkHandle
+    public sealed class Async : WorkHandle<Async>
     {
         private readonly Gate _gate;
         private volatile bool _closeScheduled;
 
         internal Async(LoopContext loop, Action<Async> callback)
+            : this(loop, callback is object ? (h, s) => callback(h) : (Action<Async, object>)null, null)
+        {
+        }
+
+        internal Async(LoopContext loop, Action<Async, object> callback, object state)
             : base(loop, uv_handle_type.UV_ASYNC)
         {
             if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
 
-            Callback = state => callback.Invoke((Async)state);
+            Callback = callback;
+            State = state;
             _gate = new Gate();
             _closeScheduled = false;
         }
@@ -56,7 +62,7 @@ namespace DotNetty.NetUV.Handles
             return this;
         }
 
-        protected override void ScheduleClose(Action<ScheduleHandle> handler = null)
+        protected override void ScheduleClose(Action<Async> handler = null)
         {
             using (_gate.Aquire())
             {
@@ -65,7 +71,7 @@ namespace DotNetty.NetUV.Handles
             }
         }
 
-        public void CloseHandle(Action<Async> onClosed = null) =>
-            base.CloseHandle(onClosed);
+        //public void CloseHandle(Action<Async> onClosed = null) =>
+        //    base.CloseHandle(onClosed);
     }
 }

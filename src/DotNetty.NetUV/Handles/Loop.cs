@@ -83,6 +83,18 @@ namespace DotNetty.NetUV.Handles
             return new Timer(_handle);
         }
 
+        public Timer CreateTimer(Action<Timer> callback)
+        {
+            _handle.Validate();
+            return new Timer(_handle, callback);
+        }
+
+        public Timer CreateTimer(Action<Timer, object> callback, object state)
+        {
+            _handle.Validate();
+            return new Timer(_handle, callback, state);
+        }
+
         public Prepare CreatePrepare()
         {
             _handle.Validate();
@@ -107,6 +119,14 @@ namespace DotNetty.NetUV.Handles
 
             _handle.Validate();
             return new Async(_handle, callback);
+        }
+
+        public Async CreateAsync(Action<Async, object> callback, object state)
+        {
+            if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
+
+            _handle.Validate();
+            return new Async(_handle, callback, state);
         }
 
         public Poll CreatePoll(int fileDescriptor)

@@ -21,7 +21,7 @@ namespace DotNetty.NetUV.Handles
     /// Prepare handles will run the given callback once per loop iteration, 
     /// right before polling for i/o.
     /// </summary>
-    public sealed class Prepare : WorkHandle
+    public sealed class Prepare : WorkHandle<Prepare>
     {
         internal Prepare(LoopContext loop)
             : base(loop, uv_handle_type.UV_PREPARE)
@@ -29,15 +29,23 @@ namespace DotNetty.NetUV.Handles
 
         public Prepare Start(Action<Prepare> callback)
         {
-            if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
+            //if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
 
-            ScheduleStart(state => callback((Prepare)state));
+            ScheduleStart(callback);
+            return this;
+        }
+
+        public Prepare Start(Action<Prepare, object> callback, object state)
+        {
+            //if (callback is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.callback); }
+
+            ScheduleStart(callback, state);
             return this;
         }
 
         public void Stop() => StopHandle();
 
-        public void CloseHandle(Action<Prepare> onClosed = null) =>
-            base.CloseHandle(onClosed);
+        //public void CloseHandle(Action<Prepare> onClosed = null) =>
+        //    base.CloseHandle(onClosed);
     }
 }

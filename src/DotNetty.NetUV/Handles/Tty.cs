@@ -36,7 +36,7 @@ namespace DotNetty.NetUV.Handles
         IO
     }
 
-    public sealed class Tty : StreamHandle
+    public sealed class Tty : StreamHandle<Tty>
     {
         private readonly TtyType _ttyType;
 
@@ -46,13 +46,13 @@ namespace DotNetty.NetUV.Handles
             _ttyType = ttyType;
         }
 
-        public Tty OnRead(
+        public override void OnRead(
             Action<Tty, ReadableBuffer> onAccept,
             Action<Tty, Exception> onError,
             Action<Tty> onCompleted = null)
         {
-            if (onAccept is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onAccept); }
-            if (onError is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onError); }
+            //if (onAccept is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onAccept); }
+            //if (onError is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onError); }
 
             if (_ttyType != TtyType.In)
             {
@@ -63,13 +63,11 @@ namespace DotNetty.NetUV.Handles
                 (stream, buffer) => onAccept((Tty)stream, buffer),
                 (stream, error) => onError((Tty)stream, error),
                 stream => onCompleted?.Invoke((Tty)stream));
-
-            return this;
         }
 
-        public Tty OnRead(Action<Tty, IStreamReadCompletion> onRead)
+        public override void OnRead(Action<Tty, IStreamReadCompletion> onRead)
         {
-            if (onRead is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onRead); }
+            //if (onRead is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onRead); }
 
             if (_ttyType != TtyType.In)
             {
@@ -77,11 +75,10 @@ namespace DotNetty.NetUV.Handles
             }
 
             base.OnRead((stream, completion) => onRead((Tty)stream, completion));
-            return this;
         }
 
-        public void Shutdown(Action<Tty, Exception> completedAction = null) =>
-            base.Shutdown((state, error) => completedAction?.Invoke((Tty)state, error));
+        //public void Shutdown(Action<Tty, Exception> completedAction = null) =>
+        //    base.Shutdown((state, error) => completedAction?.Invoke((Tty)state, error));
 
         public Tty Mode(TtyMode mode)
         {
@@ -106,15 +103,15 @@ namespace DotNetty.NetUV.Handles
 
         public static void ResetMode() => NativeMethods.TtyResetMode();
 
-        public void CloseHandle(Action<Tty> onClosed = null)
-        {
-            Action<ScheduleHandle> handler = null;
-            if (onClosed is object)
-            {
-                handler = state => onClosed((Tty)state);
-            }
+        //public void CloseHandle(Action<Tty> onClosed = null)
+        //{
+        //    Action<ScheduleHandle> handler = null;
+        //    if (onClosed is object)
+        //    {
+        //        handler = state => onClosed((Tty)state);
+        //    }
 
-            base.CloseHandle(handler);
-        }
+        //    base.CloseHandle(handler);
+        //}
     }
 }
