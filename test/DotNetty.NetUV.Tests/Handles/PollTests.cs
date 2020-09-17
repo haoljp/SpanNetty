@@ -480,7 +480,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void BadFileDescriptorType()
         {
-            if (Platform.IsDarwin)
+            if (PlatformApi.IsDarwin)
             {
                 // On macOS, the create poll actually sucessfully created.
                 return;

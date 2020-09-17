@@ -31,7 +31,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [InlineData(false)]
         public void Run(bool dualStack)
         {
-            if (!Platform.OSSupportsIPv6)
+            if (!PlatformApi.OSSupportsIPv6)
             {
                 return;
             }

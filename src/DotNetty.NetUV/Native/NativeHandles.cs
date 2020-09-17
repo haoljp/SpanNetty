@@ -153,7 +153,7 @@ namespace DotNetty.NetUV.Native
             var port = ((int)(_field0 & 0x00FF0000) >> 8) | (int)((_field0 & 0xFF000000) >> 24);
 
             int family = (int)_field0;
-            if (Platform.IsDarwin)
+            if (PlatformApi.IsDarwin)
             {
                 // see explaination in example 4
                 family >>= 8;

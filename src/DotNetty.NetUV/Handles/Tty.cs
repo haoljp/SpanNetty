@@ -82,7 +82,7 @@ namespace DotNetty.NetUV.Handles
 
         public Tty Mode(TtyMode mode)
         {
-            if (mode == TtyMode.IO && !Platform.IsUnix)
+            if (mode == TtyMode.IO && !PlatformApi.IsUnix)
             {
                 ThrowHelper.ThrowArgumentException_TtyMode_is_Unix_only(mode);
             }

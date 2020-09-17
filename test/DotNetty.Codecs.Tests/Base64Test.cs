@@ -171,8 +171,11 @@ namespace DotNetty.Codecs.Tests
         [Fact]
         public void TestPaddingNewline()
         {
-            //if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) { return; }
-
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                // TODO Azure DevOps X509Certificate.Export: System.Security.Cryptography.CryptographicException : ASN1 corrupted data.
+                return;
+            }
             string certString = "-----BEGIN CERTIFICATE-----\n" +
                     "MIICqjCCAjGgAwIBAgICI1YwCQYHKoZIzj0EATAmMSQwIgYDVQQDDBtUcnVzdGVk\n" +
                     "IFRoaW4gQ2xpZW50IFJvb3QgQ0EwIhcRMTYwMTI0MTU0OTQ1LTA2MDAXDTE2MDQy\n" +

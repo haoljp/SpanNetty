@@ -22,7 +22,9 @@
 
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using DotNetty.NetUV.Handles;
 using DotNetty.NetUV.Native;
 using DotNetty.NetUV.Channels;
@@ -50,5 +52,40 @@ namespace DotNetty.NetUV
                 return new InvalidOperationException($"Invalid {nameof(LoopExecutor)} state {executionState}");
             }
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowInvalidOperationException_Dispatch()
+        {
+            throw GetInvalidOperationException();
+
+            static InvalidOperationException GetInvalidOperationException()
+            {
+                return new InvalidOperationException("No pipe connections to dispatch handles.");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static uint ThrowInvalidOperationException_Dispatch(AddressFamily addressFamily)
+        {
+            throw GetInvalidOperationException();
+            InvalidOperationException GetInvalidOperationException()
+            {
+                return new InvalidOperationException($"Address family : {addressFamily} platform : {RuntimeInformation.OSDescription} not supported");
+            }
+        }
+
+        #region -- SocketException --
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowSocketException(int errorCode)
+        {
+            throw GetSocketException();
+            SocketException GetSocketException()
+            {
+                return new SocketException(errorCode);
+            }
+        }
+
+        #endregion
     }
 }

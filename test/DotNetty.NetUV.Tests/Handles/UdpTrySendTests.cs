@@ -25,7 +25,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void Run()
         {
-            if (Platform.IsWindows)
+            if (PlatformApi.IsWindows)
             {
                 // As of libuv 1.9.1 on Windows, udp_try_send is not yet implemented.
                 return;

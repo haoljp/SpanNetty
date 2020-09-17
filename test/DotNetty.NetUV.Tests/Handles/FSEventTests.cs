@@ -39,8 +39,8 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void WatchDirRecursive()
         {
-            if (!Platform.IsWindows 
-                && !Platform.IsDarwin)
+            if (!PlatformApi.IsWindows 
+                && !PlatformApi.IsDarwin)
             {
                 // Recursive directory watching not supported on this platform.
                 return;

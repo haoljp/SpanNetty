@@ -116,7 +116,7 @@ namespace DotNetty.NetUV.Native
     [StructLayout(LayoutKind.Sequential)]
     internal struct addrinfo
     {
-        private static readonly bool s_isWindows = Platform.IsWindows;
+        private static readonly bool s_isWindows = PlatformApi.IsWindows;
 
         public readonly int ai_flags;
         public readonly int ai_family;   // AF_INET or AF_INET6

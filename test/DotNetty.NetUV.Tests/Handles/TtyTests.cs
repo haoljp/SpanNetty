@@ -21,8 +21,8 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void Types()
         {
-            if (Platform.IsWindows 
-                || Platform.IsDarwin)
+            if (PlatformApi.IsWindows 
+                || PlatformApi.IsDarwin)
             {
                 return;
             }

@@ -66,7 +66,7 @@ namespace DotNetty.NetUV.Tests.Handles
         }
 
         static string GetPipeName() => 
-            Platform.IsWindows
+            PlatformApi.IsWindows
             ? "\\\\?\\pipe\\uv-test4"
             : "/tmp/uv-test4-sock";
 

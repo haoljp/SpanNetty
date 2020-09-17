@@ -24,7 +24,7 @@ namespace DotNetty.NetUV.Tests.Handles
         public static IEnumerable<object[]> IpFamilyCases()
         {
             yield return new object[] { "0.0.0.0" };
-            if (Platform.OSSupportsIPv6)
+            if (PlatformApi.OSSupportsIPv6)
             {
                 yield return new object[] { "::" };
             }

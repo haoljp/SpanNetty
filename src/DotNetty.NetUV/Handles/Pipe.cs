@@ -30,7 +30,7 @@ namespace DotNetty.NetUV.Handles
 
         public int GetSendBufferSize()
         {
-            if (Platform.IsWindows)
+            if (PlatformApi.IsWindows)
             {
                 ThrowHelper.ThrowPlatformNotSupportedException_handle_type_send_buffer_size_setting_not_supported_on_Windows(HandleType);
             }
@@ -42,7 +42,7 @@ namespace DotNetty.NetUV.Handles
         {
             if ((uint)value > SharedConstants.TooBigOrNegative) { ThrowHelper.ThrowArgumentException_PositiveOrZero(value, ExceptionArgument.value); }
 
-            if (Platform.IsWindows)
+            if (PlatformApi.IsWindows)
             {
                 ThrowHelper.ThrowPlatformNotSupportedException_handle_type_send_buffer_size_setting_not_supported_on_Windows(HandleType);
             }
@@ -52,7 +52,7 @@ namespace DotNetty.NetUV.Handles
 
         public int GetReceiveBufferSize()
         {
-            if (Platform.IsWindows)
+            if (PlatformApi.IsWindows)
             {
                 ThrowHelper.ThrowPlatformNotSupportedException_handle_type_send_buffer_size_setting_not_supported_on_Windows(HandleType);
             }
@@ -64,7 +64,7 @@ namespace DotNetty.NetUV.Handles
         {
             if ((uint)value > SharedConstants.TooBigOrNegative) { ThrowHelper.ThrowArgumentException_PositiveOrZero(value, ExceptionArgument.value); }
 
-            if (Platform.IsWindows)
+            if (PlatformApi.IsWindows)
             {
                 ThrowHelper.ThrowPlatformNotSupportedException_handle_type_send_buffer_size_setting_not_supported_on_Windows(HandleType);
             }

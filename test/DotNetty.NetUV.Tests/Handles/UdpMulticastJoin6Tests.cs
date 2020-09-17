@@ -27,7 +27,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void Run()
         {
-            if (!Platform.OSSupportsIPv6)
+            if (!PlatformApi.OSSupportsIPv6)
             {
                 return;
             }
@@ -55,7 +55,7 @@ namespace DotNetty.NetUV.Tests.Handles
             IPAddress group = IPAddress.Parse("ff02::1");
             try
             {
-                if (Platform.IsDarwin)
+                if (PlatformApi.IsDarwin)
                 {
                     client.JoinGroup(group, IPAddress.IPv6Loopback);
                 }
@@ -66,12 +66,12 @@ namespace DotNetty.NetUV.Tests.Handles
             }
             catch (OperationException error)
             {
-                if (Platform.IsDarwin)
+                if (PlatformApi.IsDarwin)
                 {
                     Assert.Equal(ErrorCode.EADDRNOTAVAIL, error.ErrorCode);
                     return;
                 }
-                else if (Platform.IsLinux)
+                else if (PlatformApi.IsLinux)
                 {
                     Assert.Equal(ErrorCode.ENODEV, error.ErrorCode);
                     return;

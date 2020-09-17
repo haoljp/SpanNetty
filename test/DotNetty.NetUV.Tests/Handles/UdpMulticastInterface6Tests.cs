@@ -23,7 +23,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void Run()
         {
-            if (!Platform.OSSupportsIPv6)
+            if (!PlatformApi.OSSupportsIPv6)
             {
                 return;
             }
@@ -53,7 +53,7 @@ namespace DotNetty.NetUV.Tests.Handles
                 this.sendError = exception;
             }
 
-            if (Platform.IsWindows)
+            if (PlatformApi.IsWindows)
             {
                 Assert.Null(this.sendError);
             }

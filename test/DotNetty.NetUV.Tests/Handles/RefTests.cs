@@ -350,7 +350,7 @@ namespace DotNetty.NetUV.Tests.Handles
 
         void OnWriteCompleted(Pipe handle, Exception exception) => this.callbackCount++;
 
-        static string GetPipeName() => Platform.IsWindows
+        static string GetPipeName() => PlatformApi.IsWindows
                 ? "\\\\?\\pipe\\uv-test5"
                 : "/tmp/uv-test5-sock";
 

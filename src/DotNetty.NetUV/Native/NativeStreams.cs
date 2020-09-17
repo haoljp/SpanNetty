@@ -25,7 +25,7 @@ namespace DotNetty.NetUV.Native
     [StructLayout(LayoutKind.Sequential)]
     internal struct uv_buf_t
     {
-        private static readonly bool IsWindows = Platform.IsWindows;
+        private static readonly bool IsWindows = PlatformApi.IsWindows;
         private static readonly int Size = IntPtr.Size;
 
         /*

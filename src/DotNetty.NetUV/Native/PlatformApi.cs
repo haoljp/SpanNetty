@@ -17,9 +17,9 @@ namespace DotNetty.NetUV.Native
     using System.Net.Sockets;
     using System.Runtime.InteropServices;
 
-    internal static class Platform
+    internal static partial class PlatformApi
     {
-        static Platform()
+        static PlatformApi()
         {
             IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);

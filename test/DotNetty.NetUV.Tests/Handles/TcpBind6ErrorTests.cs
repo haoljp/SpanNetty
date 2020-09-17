@@ -24,7 +24,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void AddressInUse()
         {
-            if (!Platform.OSSupportsIPv6)
+            if (!PlatformApi.OSSupportsIPv6)
             {
                 return;
             }
@@ -47,7 +47,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void AddressNotAvailable()
         {
-            if (!Platform.OSSupportsIPv6)
+            if (!PlatformApi.OSSupportsIPv6)
             {
                 return;
             }
@@ -65,7 +65,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void Invalid()
         {
-            if (!Platform.OSSupportsIPv6)
+            if (!PlatformApi.OSSupportsIPv6)
             {
                 return;
             }
@@ -86,7 +86,7 @@ namespace DotNetty.NetUV.Tests.Handles
         [Fact]
         public void LocalHost()
         {
-            if (!Platform.OSSupportsIPv6)
+            if (!PlatformApi.OSSupportsIPv6)
             {
                 return;
             }

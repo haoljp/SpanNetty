@@ -53,7 +53,7 @@ namespace DotNetty.NetUV.Tests.Handles
             // It seems that Linux is broken here - bind succeeds 
             // for "127.255.255.255"
             //
-            if (ipAddress == "127.255.255.255" && Platform.IsLinux)
+            if (ipAddress == "127.255.255.255" && PlatformApi.IsLinux)
             {
                 tcp.Bind(endPoint);
             }

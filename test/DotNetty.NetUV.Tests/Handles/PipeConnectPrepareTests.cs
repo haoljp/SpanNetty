@@ -49,7 +49,7 @@ namespace DotNetty.NetUV.Tests.Handles
         }
 
         static string GetBadPipeName() => 
-            Platform.IsWindows 
+            PlatformApi.IsWindows 
             ? "bad-pipe" 
             : "/path/to/unix/socket/that/really/should/not/be/there";
 

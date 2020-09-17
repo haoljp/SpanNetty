@@ -40,7 +40,7 @@ namespace DotNetty.NetUV.Tests.Handles
         static void OnClose(Pipe handle) => handle.Dispose();
 
         static string GetPipeName() => 
-            Platform.IsWindows
+            PlatformApi.IsWindows
             ? "\\\\?\\pipe\\uv-test3"
             : "/tmp/uv-test3-sock";
 
