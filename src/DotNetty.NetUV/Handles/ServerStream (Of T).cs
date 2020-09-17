@@ -20,6 +20,8 @@ namespace DotNetty.NetUV.Handles
     public abstract class ServerStream<THandle> : StreamHandle<THandle>, IInternalServerStream
         where THandle : ServerStream<THandle>
     {
+        internal const int DefaultBacklog = ServerStream.DefaultBacklog;
+
         internal static readonly uv_watcher_cb ConnectionCallback = (h, s) => OnConnectionCallback(h, s);
 
         private Action<THandle, Exception> _connectionHandler;
@@ -37,7 +39,7 @@ namespace DotNetty.NetUV.Handles
 
         internal abstract IInternalStreamHandle NewStream();
 
-        public void StreamListen(Action<THandle, Exception> onConnection, int backlog = ServerStream.DefaultBacklog)
+        public void StreamListen(Action<THandle, Exception> onConnection, int backlog = DefaultBacklog)
         {
             if (onConnection is null) { ThrowHelper.ThrowArgumentNullException(ExceptionArgument.onConnection); }
             if ((uint)(backlog - 1) > SharedConstants.TooBigOrNegative) { ThrowHelper.ThrowArgumentException_Positive(backlog, ExceptionArgument.backlog); }

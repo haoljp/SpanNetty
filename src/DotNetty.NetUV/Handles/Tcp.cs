@@ -16,7 +16,6 @@ namespace DotNetty.NetUV.Handles
 {
     using System;
     using System.Net;
-    using DotNetty.Buffers;
     using DotNetty.NetUV.Native;
 
     public sealed class Tcp : ServerStream<Tcp>
